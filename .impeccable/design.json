@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-07T00:00:00.000Z",
+  "title": "Design System: CommerceOne Integration Hub",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Control Plane Indigo",
+        "canonical": "oklch(0.45 0.18 260)",
+        "tonalRamp": [
+          "oklch(0.18 0.08 260)",
+          "oklch(0.25 0.12 260)",
+          "oklch(0.32 0.14 260)",
+          "oklch(0.38 0.16 260)",
+          "oklch(0.45 0.18 260)",
+          "oklch(0.55 0.16 260)",
+          "oklch(0.72 0.10 260)",
+          "oklch(0.94 0.04 260)"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Console Background",
+        "canonical": "oklch(0.99 0.002 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.02 240)",
+          "oklch(0.25 0.02 240)",
+          "oklch(0.40 0.02 240)",
+          "oklch(0.50 0.02 240)",
+          "oklch(0.65 0.01 240)",
+          "oklch(0.80 0.008 240)",
+          "oklch(0.91 0.01 240)",
+          "oklch(0.99 0.002 240)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.15 0.02 240)",
+        "tonalRamp": [
+          "oklch(0.15 0.02 240)",
+          "oklch(0.25 0.02 240)",
+          "oklch(0.35 0.02 240)",
+          "oklch(0.45 0.02 240)",
+          "oklch(0.55 0.02 240)",
+          "oklch(0.65 0.02 240)",
+          "oklch(0.75 0.015 240)",
+          "oklch(0.85 0.01 240)"
+        ]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Healthy Green",
+        "canonical": "oklch(0.55 0.15 155)",
+        "tonalRamp": [
+          "oklch(0.20 0.08 155)",
+          "oklch(0.28 0.10 155)",
+          "oklch(0.35 0.12 155)",
+          "oklch(0.42 0.14 155)",
+          "oklch(0.55 0.15 155)",
+          "oklch(0.65 0.13 155)",
+          "oklch(0.78 0.08 155)",
+          "oklch(0.94 0.04 155)"
+        ]
+      },
+      "destructive": {
+        "role": "semantic",
+        "displayName": "Failure Red",
+        "canonical": "oklch(0.577 0.245 27.325)",
+        "tonalRamp": [
+          "oklch(0.22 0.12 27)",
+          "oklch(0.32 0.16 27)",
+          "oklch(0.42 0.20 27)",
+          "oklch(0.50 0.22 27)",
+          "oklch(0.577 0.245 27.325)",
+          "oklch(0.65 0.20 27)",
+          "oklch(0.78 0.12 27)",
+          "oklch(0.94 0.04 25)"
+        ]
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "Alert Amber",
+        "canonical": "oklch(0.65 0.16 55)",
+        "tonalRamp": [
+          "oklch(0.25 0.08 55)",
+          "oklch(0.35 0.10 55)",
+          "oklch(0.45 0.12 55)",
+          "oklch(0.55 0.14 55)",
+          "oklch(0.65 0.16 55)",
+          "oklch(0.75 0.14 55)",
+          "oklch(0.85 0.10 55)",
+          "oklch(0.94 0.05 55)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles on tenant detail and dashboard section headers."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Card titles, wizard headings, dialog titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Stat card labels, tab labels, column group headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default UI text, table cells, form labels. Max 65–75ch in prose."
+      },
+      "label": {
+        "displayName": "Label / Mono",
+        "purpose": "Status badges, IDs, codes, timestamps."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-sm",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Optional lift on stat cards and chart containers."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default transition for button hover, nav state, and focus rings."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Interactive feedback on buttons and nav items."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main call to action for wizards, creation flows, and confirmations.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Create connection</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 2rem; padding: 0 0.625rem; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: oklch(0.99 0 0); background: oklch(0.45 0.18 260); border: 1px solid transparent; border-radius: 0.5rem; cursor: pointer; transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-primary:hover { background: color-mix(in oklch, oklch(0.45 0.18 260) 80%, transparent); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, oklch(0.55 0.15 260) 50%, transparent); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions: Cancel, Back, low-risk operations.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">Cancel</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; height: 2rem; padding: 0 0.625rem; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: oklch(0.15 0.02 240); background: oklch(0.99 0.002 240); border: 1px solid oklch(0.91 0.01 240); border-radius: 0.5rem; cursor: pointer; transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-btn-outline:hover { background: oklch(0.96 0.008 240); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklch, oklch(0.55 0.15 260) 50%, transparent); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Default text field for forms and search.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search tenants…\" aria-label=\"Search tenants\" />",
+      "css": ".ds-input { display: block; width: 100%; height: 2rem; padding: 0.25rem 0.625rem; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; color: oklch(0.15 0.02 240); background: transparent; border: 1px solid oklch(0.91 0.01 240); border-radius: 0.5rem; transition: border-color 150ms, box-shadow 150ms; } .ds-input::placeholder { color: oklch(0.5 0.02 240); } .ds-input:focus-visible { outline: none; border-color: oklch(0.55 0.15 260); box-shadow: 0 0 0 3px color-mix(in oklch, oklch(0.55 0.15 260) 50%, transparent); }"
+    },
+    {
+      "name": "Active Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "Top navigation link in active state.",
+      "html": "<a class=\"ds-nav-active\" href=\"#\"><svg class=\"ds-nav-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/></svg>Dashboard</a>",
+      "css": ".ds-nav-active { display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; font-family: Geist, ui-sans-serif, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; color: oklch(0.35 0.12 260); background: oklch(0.94 0.04 260); border-radius: 0.375rem; text-decoration: none; transition: background 150ms; } .ds-nav-active:hover { background: color-mix(in oklch, oklch(0.94 0.04 260) 90%, oklch(0.35 0.12 260)); } .ds-nav-icon { flex-shrink: 0; }"
+    },
+    {
+      "name": "Success Status Badge",
+      "kind": "chip",
+      "refersTo": "status-badge-success",
+      "description": "Operational status label for healthy/completed states.",
+      "html": "<span class=\"ds-badge-success\">COMPLETED</span>",
+      "css": ".ds-badge-success { display: inline-flex; align-items: center; height: 1.25rem; padding: 0 0.5rem; font-family: \"Geist Mono\", ui-monospace, monospace; font-size: 0.75rem; font-weight: 500; color: oklch(0.35 0.1 155); background: oklch(0.94 0.04 155); border: 1px solid transparent; border-radius: 9999px; white-space: nowrap; }"
+    },
+    {
+      "name": "Failed Status Badge",
+      "kind": "chip",
+      "refersTo": "status-badge-success",
+      "description": "Operational status label for failure states.",
+      "html": "<span class=\"ds-badge-failed\">FAILED</span>",
+      "css": ".ds-badge-failed { display: inline-flex; align-items: center; height: 1.25rem; padding: 0 0.5rem; font-family: \"Geist Mono\", ui-monospace, monospace; font-size: 0.75rem; font-weight: 500; color: oklch(0.45 0.15 25); background: oklch(0.94 0.04 25); border: 1px solid transparent; border-radius: 9999px; white-space: nowrap; }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Dashboard metric container with title, value, and optional trend.",
+      "html": "<div class=\"ds-stat-card\"><div class=\"ds-stat-header\"><span class=\"ds-stat-title\">Failed Executions</span></div><div class=\"ds-stat-value\">24</div><div class=\"ds-stat-trend ds-stat-trend-down\">-12% vs last week</div></div>",
+      "css": ".ds-stat-card { padding: 1rem; background: oklch(1 0 0); border: 1px solid color-mix(in oklch, oklch(0.91 0.01 240) 60%, transparent); border-radius: 0.75rem; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); font-family: Geist, ui-sans-serif, system-ui, sans-serif; } .ds-stat-header { margin-bottom: 0.5rem; } .ds-stat-title { font-size: 0.875rem; font-weight: 500; color: oklch(0.5 0.02 240); } .ds-stat-value { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: oklch(0.15 0.02 240); } .ds-stat-trend { margin-top: 0.25rem; font-size: 0.75rem; } .ds-stat-trend-down { color: oklch(0.577 0.245 27.325); }"
+    },
+    {
+      "name": "Wizard Step Bar",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "Horizontal progress indicator for multi-step wizards.",
+      "html": "<div class=\"ds-wizard-steps\" aria-hidden=\"true\"><span class=\"ds-wizard-step ds-wizard-step-done\"></span><span class=\"ds-wizard-step ds-wizard-step-done\"></span><span class=\"ds-wizard-step ds-wizard-step-active\"></span><span class=\"ds-wizard-step\"></span><span class=\"ds-wizard-step\"></span></div>",
+      "css": ".ds-wizard-steps { display: flex; gap: 0.25rem; } .ds-wizard-step { flex: 1; height: 0.25rem; border-radius: 9999px; background: oklch(0.96 0.008 240); } .ds-wizard-step-done, .ds-wizard-step-active { background: oklch(0.45 0.18 260); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Control Plane",
+    "overview": "CommerceOne Integration Hub is an operations console, not a marketing surface. The visual system exists to help platform operators scan state, triage failures, and configure integrations under pressure. Density is a feature: tables carry real data, charts encode execution health, and navigation stays shallow so engineers can move from tenant list to DLQ record in two clicks.\n\nThe aesthetic inherits the restrained confidence of Datadog and AWS Console: cool neutral chrome, a single indigo-blue accent used sparingly, and semantic color reserved for status. Decoration never competes with data.",
+    "keyCharacteristics": [
+      "Cool-tinted neutral surfaces with one indigo-blue primary accent (hue 260)",
+      "Semantic status colors (success, warning, destructive, info) on subtle tinted backgrounds",
+      "Geist sans for UI copy, Geist Mono for codes, IDs, and status labels",
+      "Flat-by-default elevation; depth via borders and tonal layering, not heavy shadows",
+      "8px base radius on interactive controls; slightly larger on cards",
+      "WCAG 2.1 AA contrast targets on all operator-facing text"
+    ],
+    "rules": [
+      {
+        "name": "The Status Is Sacred Rule",
+        "body": "Semantic colors appear only on status badges, chart series, timeline nodes, pipeline stages, and error messages. Never use success green or failure red for decorative emphasis or navigation.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Accent Rule",
+        "body": "Primary indigo is for CTAs, links, logo mark, and active navigation. If more than ~10% of a viewport reads as primary blue, the screen is over-branded.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Cream Rule",
+        "body": "Backgrounds stay cool-tinted near-white or true dark gray in dark mode. Warm sand, beige, and parchment tones are prohibited.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono for Meaning Rule",
+        "body": "Geist Mono is for codes, IDs, statuses, and configuration keys. Never set body paragraphs in mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Eyebrow Rule",
+        "body": "Do not add tiny uppercase tracked labels above every section. Section titles are sentence case, medium weight, and stand on their own.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. Shadow appears only on optional dashboard cards, never on tables, nav, or form fields.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Border Not Stripe Rule",
+        "body": "Dividers are full-width 1px borders or ring outlines. Colored left-border accent stripes on cards and alerts are prohibited.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use semantic status tokens (success-subtle, warning-subtle, destructive-subtle) for badges, charts, timelines, and pipeline stages.",
+      "Do keep primary indigo on CTAs, links, logo, and active nav only.",
+      "Do use Geist Mono for tenant codes, execution IDs, integration codes, and status labels.",
+      "Do validate forms with Zod + React Hook Form; show specific inline errors near fields.",
+      "Do design tables for density: more rows visible, clear column headers, responsive card fallback on mobile.",
+      "Do respect prefers-reduced-motion; gate no content behind entrance animations.",
+      "Do maintain WCAG AA contrast: body text ≥4.5:1, large text ≥3:1."
+    ],
+    "donts": [
+      "Don't use generic SaaS landing-page aesthetics inside the app (hero metrics, gradient accents, oversized empty space).",
+      "Don't build consumer-style dashboards with identical icon + heading + blurb card grids.",
+      "Don't use warm cream/sand body backgrounds or muted gray body text that fails contrast.",
+      "Don't use marketing buzzwords in UI copy (\"seamless\", \"enterprise-grade\", \"next-generation\").",
+      "Don't add decorative motion, glassmorphism, or gradient text for visual interest alone.",
+      "Don't use side-stripe accent borders on cards and alerts.",
+      "Don't add tiny uppercase tracked eyebrows above every section heading.",
+      "Don't hard-code Tailwind color utilities (blue-600, emerald-600, hex values) in components; use design tokens from globals.css.",
+      "Don't rely on color alone for status; every status indicator includes a text label."
+    ]
+  }
+}

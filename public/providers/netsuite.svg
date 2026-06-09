@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="NetSuite">
+  <rect width="48" height="48" rx="10" fill="#1B3D6D"/>
+  <path fill="#E8751A" d="M12 16h24v3H12v-3zm0 7h18v3H12v-3zm0 7h24v3H12v-3z"/>
+  <circle cx="34" cy="30" r="5" fill="#E8751A"/>
+</svg>

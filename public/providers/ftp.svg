@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="FTP">
+  <rect width="48" height="48" rx="10" fill="#0891B2"/>
+  <path fill="#fff" d="M14 14h14l4 4v18H14V14zm14 0v4h4l-4-4z"/>
+  <path fill="#A5F3FC" d="M18 24h12v2H18v-2zm0 5h8v2h-8v-2z"/>
+  <path fill="#fff" d="M28 29h6v2h-6v-2z"/>
+</svg>
