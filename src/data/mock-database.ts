@@ -167,6 +167,22 @@ function generateConnectionConfiguration(providerCode: string): Record<string, s
         tokenId: "mock_token_id",
         tokenSecret: "mock_token_secret",
       };
+    case "bigquery":
+      return {
+        projectId: "commerce-analytics-prod",
+        datasetId: "integration_hub",
+        location: "asia-southeast1",
+        serviceAccountKey: "mock-service-account-json-ref",
+      };
+    case "synapse":
+      return {
+        serverName: "synapse-workspace.sql.azuresynapse.net",
+        database: "IntegrationHub",
+        authType: "service_principal",
+        clientId: "mock-azure-client-id",
+        clientSecret: "mock-azure-client-secret",
+        tenantId: "mock-azure-tenant-id",
+      };
     default:
       return {};
   }
@@ -185,6 +201,8 @@ function generateProviders(): Provider[] {
     { code: "ftp", name: "FTP", category: ProviderCategory.STORAGE, caps: [ProviderCapability.SOURCE, ProviderCapability.DESTINATION] },
     { code: "s3", name: "Amazon S3", category: ProviderCategory.STORAGE, caps: [ProviderCapability.SOURCE, ProviderCapability.DESTINATION] },
     { code: "netsuite", name: "NetSuite", category: ProviderCategory.ERP, caps: [ProviderCapability.DESTINATION] },
+    { code: "bigquery", name: "GCP BigQuery", category: ProviderCategory.CUSTOM, caps: [ProviderCapability.DESTINATION] },
+    { code: "synapse", name: "Azure Synapse", category: ProviderCategory.CUSTOM, caps: [ProviderCapability.DESTINATION] },
   ];
 
   return defs.map((d, i) => ({
@@ -294,6 +312,23 @@ function getProviderSchema(code: string): ConfigSchemaField[] {
       { key: "tokenId", label: "Token ID", type: "text" as const, required: true },
       { key: "tokenSecret", label: "Token Secret", type: "password" as const, required: true },
     ],
+    bigquery: [
+      { key: "projectId", label: "GCP Project ID", type: "text" as const, required: true },
+      { key: "datasetId", label: "Dataset ID", type: "text" as const, required: true },
+      { key: "location", label: "Location", type: "text" as const, required: false, placeholder: "asia-southeast1" },
+      { key: "serviceAccountKey", label: "Service Account Key (JSON)", type: "password" as const, required: true },
+    ],
+    synapse: [
+      { key: "serverName", label: "Server / Workspace SQL Endpoint", type: "text" as const, required: true },
+      { key: "database", label: "Database", type: "text" as const, required: true },
+      { key: "authType", label: "Auth Type", type: "select" as const, required: true, options: [
+        { label: "SQL Authentication", value: "sql" },
+        { label: "Service Principal", value: "service_principal" },
+      ]},
+      { key: "username", label: "Username / Client ID", type: "text" as const, required: true },
+      { key: "password", label: "Password / Client Secret", type: "password" as const, required: true },
+      { key: "tenantId", label: "Azure Tenant ID", type: "text" as const, required: false },
+    ],
   };
   return schemas[code] ?? [];
 }
@@ -334,7 +369,8 @@ function isDestinationProvider(provider: Provider): boolean {
     provider.category === ProviderCategory.STORAGE ||
     provider.category === ProviderCategory.PROTOCOL ||
     provider.category === ProviderCategory.CRM ||
-    provider.category === ProviderCategory.WMS
+    provider.category === ProviderCategory.WMS ||
+    provider.category === ProviderCategory.CUSTOM
   );
 }
 
@@ -680,10 +716,11 @@ function generateIntegrations(
       const destProvider = providerMap.get(destConn.providerId)!;
       const dataFlow = sourceProvider.dataFlows[j % Math.max(sourceProvider.dataFlows.length, 1)];
       const createdAt = randomDate(120);
+      const integrationKey = `INT-${String(counter).padStart(4, "0")}`;
       integrations.push({
-        id: id("INT", counter),
+        id: integrationKey,
         tenantId: tenant.id,
-        code: `INT-${String(counter).padStart(4, "0")}`,
+        code: integrationKey,
         name: `${sourceProvider.name} → ${destProvider.name}`,
         description: `Sync data from ${sourceProvider.name} to ${destProvider.name}`,
         tags: ["production", "automated"],

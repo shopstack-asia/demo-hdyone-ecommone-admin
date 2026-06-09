@@ -6,6 +6,8 @@ export const PROVIDER_DOMAIN_MAP: Record<string, string> = {
   sap: "sap.com",
   netsuite: "netsuite.com",
   s3: "aws.amazon.com",
+  bigquery: "cloud.google.com",
+  synapse: "microsoft.com",
 };
 
 export interface LogoDevOptions {

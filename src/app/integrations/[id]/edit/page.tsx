@@ -7,8 +7,8 @@ interface IntegrationEditRedirectProps {
 
 export default async function IntegrationEditPage({ params }: IntegrationEditRedirectProps) {
   const { id } = await params;
-  const integration = await integrationService.getIntegration(id);
+  const integration = await integrationService.resolveIntegrationByKey(id);
   if (!integration) notFound();
 
-  redirect(`/tenants/${integration.tenantId}/integrations/${id}/edit`);
+  redirect(`/tenants/${integration.tenantId}/integrations/${integration.id}/edit`);
 }

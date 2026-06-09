@@ -21,6 +21,8 @@ const DESTINATION_CATEGORY_MAP: Record<string, ProviderCategory[]> = {
   PIM: [ProviderCategory.CUSTOM, ProviderCategory.ERP],
   WMS: [ProviderCategory.WMS, ProviderCategory.STORAGE],
   CRM: [ProviderCategory.CRM, ProviderCategory.ERP],
+  DATA_WAREHOUSE: [ProviderCategory.CUSTOM],
+  CUSTOM: [ProviderCategory.CUSTOM],
 };
 
 export function getSourceDataFlows(provider: Provider | undefined): ProviderDataFlow[] {

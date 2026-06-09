@@ -7,8 +7,8 @@ function flow(providerCode: string, f: FlowInput): ProviderDataFlow {
   return { ...f, id: f.id ?? `${providerCode}-${f.code.toLowerCase().replace(/_/g, "-")}` };
 }
 
-const commerceDest = ["ERP", "OMS", "API", "QUEUE"];
-const fileDest = ["ERP", "PIM", "WMS", "API"];
+const commerceDest = ["ERP", "OMS", "API", "QUEUE", "DATA_WAREHOUSE"];
+const fileDest = ["ERP", "PIM", "WMS", "API", "DATA_WAREHOUSE"];
 
 function marketplaceFlows(code: string, prefix: string): ProviderDataFlow[] {
   return [
@@ -407,6 +407,38 @@ const PROVIDER_DATA_FLOWS: Record<string, ProviderDataFlow[]> = {
       defaultExecutionPolicyCode: "STANDARD_ERP_SYNC",
       requiredSourceCapabilities: ["READ_SALES_ORDER"],
       supportedDestinationCategories: ["OMS", "API"],
+    }),
+  ],
+  bigquery: [
+    flow("bigquery", {
+      code: "ANALYTICS_LOAD",
+      name: "Analytics Load",
+      description: "Load transformed records into BigQuery tables.",
+      category: "Data Warehouse",
+      direction: "DESTINATION",
+      supportedTriggers: [TriggerType.SCHEDULE, TriggerType.API],
+      recommendedTrigger: TriggerType.SCHEDULE,
+      defaultMappingTemplateCode: "GENERIC_TO_BIGQUERY",
+      defaultValidationProfileCode: "GENERIC_VALIDATION",
+      defaultExecutionPolicyCode: "STANDARD_BATCH_LOAD",
+      requiredSourceCapabilities: [],
+      supportedDestinationCategories: ["DATA_WAREHOUSE"],
+    }),
+  ],
+  synapse: [
+    flow("synapse", {
+      code: "WAREHOUSE_LOAD",
+      name: "Warehouse Load",
+      description: "Load transformed records into Azure Synapse tables.",
+      category: "Data Warehouse",
+      direction: "DESTINATION",
+      supportedTriggers: [TriggerType.SCHEDULE, TriggerType.API],
+      recommendedTrigger: TriggerType.SCHEDULE,
+      defaultMappingTemplateCode: "GENERIC_TO_SYNAPSE",
+      defaultValidationProfileCode: "GENERIC_VALIDATION",
+      defaultExecutionPolicyCode: "STANDARD_BATCH_LOAD",
+      requiredSourceCapabilities: [],
+      supportedDestinationCategories: ["DATA_WAREHOUSE"],
     }),
   ],
 };

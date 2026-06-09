@@ -123,6 +123,25 @@ export function validateProviderAuth(
       req("secret", "Signing Secret");
       req("signingAlgorithm", "Signature Algorithm");
       break;
+    case "bigquery":
+      req("projectId", "GCP Project ID");
+      req("datasetId", "Dataset ID");
+      req("serviceAccountKey", "Service Account Key");
+      break;
+    case "synapse": {
+      req("serverName", "Server / Workspace SQL Endpoint");
+      req("database", "Database");
+      const synapseAuth = config.authType ?? "sql";
+      if (synapseAuth === "service_principal") {
+        req("username", "Client ID");
+        req("password", "Client Secret");
+        req("tenantId", "Azure Tenant ID");
+      } else {
+        req("username", "Username");
+        req("password", "Password");
+      }
+      break;
+    }
   }
   return errors;
 }

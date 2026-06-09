@@ -7,8 +7,8 @@ interface IntegrationDetailPageProps {
 
 export default async function IntegrationDetailPage({ params }: IntegrationDetailPageProps) {
   const { id, integrationId } = await params;
-  const integration = await integrationService.getIntegration(integrationId);
-  if (!integration || integration.tenantId !== id) notFound();
+  const integration = await integrationService.resolveIntegration(id, integrationId);
+  if (!integration) notFound();
 
-  redirect(`/tenants/${id}/integrations/${integrationId}/edit`);
+  redirect(`/tenants/${id}/integrations/${integration.id}/edit`);
 }

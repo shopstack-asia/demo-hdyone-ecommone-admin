@@ -11,6 +11,14 @@ export class IntegrationService {
     return repositories.integration.findById(id);
   }
 
+  async resolveIntegration(tenantId: string, key: string) {
+    return repositories.integration.resolveForTenant(tenantId, key);
+  }
+
+  async resolveIntegrationByKey(key: string) {
+    return repositories.integration.resolveByKey(key);
+  }
+
   async getIntegrationsByTenant(tenantId: string) {
     return repositories.integration.findByTenantId(tenantId);
   }

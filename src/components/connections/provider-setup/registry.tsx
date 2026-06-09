@@ -18,6 +18,8 @@ const AUTH_SETUP_REGISTRY: Record<string, ComponentType<ProviderAuthSetupProps>>
   s3: S3AuthSetup,
   rest: RestAuthSetup,
   webhook: WebhookAuthSetup,
+  bigquery: RestAuthSetup,
+  synapse: RestAuthSetup,
 };
 
 export function getProviderAuthSetup(code: string): ComponentType<ProviderAuthSetupProps> | null {
@@ -36,6 +38,8 @@ export function getProviderAuthMethod(code: string): string {
     s3: "IAM Role / Access Key",
     rest: "None / API Key / Bearer / Basic / OAuth2",
     webhook: "HMAC Signature",
+    bigquery: "Google Service Account",
+    synapse: "SQL / Service Principal",
   };
   return methods[code.toLowerCase()] ?? "Credentials";
 }

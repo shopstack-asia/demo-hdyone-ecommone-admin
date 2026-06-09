@@ -289,6 +289,30 @@ export async function simulateMetadataDiscovery(
           { label: "Last Test", value: new Date().toLocaleString() },
         ],
       };
+    case "bigquery":
+      return {
+        title: "BigQuery Dataset",
+        subtitle: `${configuration.projectId ?? "project"}.${configuration.datasetId ?? "dataset"}`,
+        sections: [
+          { label: "Project ID", value: configuration.projectId ?? "—" },
+          { label: "Dataset", value: configuration.datasetId ?? "—" },
+          { label: "Location", value: configuration.location ?? "asia-southeast1" },
+          { label: "Tables Discovered", value: "12" },
+          { label: "Write Access", value: "Granted" },
+        ],
+      };
+    case "synapse":
+      return {
+        title: "Azure Synapse Workspace",
+        subtitle: configuration.serverName ?? "",
+        sections: [
+          { label: "SQL Endpoint", value: configuration.serverName ?? "—" },
+          { label: "Database", value: configuration.database ?? "—" },
+          { label: "Auth Type", value: configuration.authType ?? "sql" },
+          { label: "Dedicated Pool", value: "integration_pool" },
+          { label: "Write Access", value: "Granted" },
+        ],
+      };
     default:
       return { title: "Connection Metadata", sections: [] };
   }
