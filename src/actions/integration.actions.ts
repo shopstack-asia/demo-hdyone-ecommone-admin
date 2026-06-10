@@ -16,9 +16,9 @@ import {
   type SaveIntegrationDraftInput,
 } from "@/lib/schemas/integration.schema";
 import { resolveProfileIdsFromDataFlow } from "@/lib/integration-wizard/resolve-profiles";
-import { connectionService, integrationService, providerService, systemConfigService } from "@/services";
+import { connectionService, dlqService, executionService, integrationService, providerService, systemConfigService } from "@/services";
 import type { ProviderDataFlow } from "@/types/domain";
-import { IntegrationStatus, TriggerType } from "@/types/enums";
+import { DlqStatus, ExecutionStatus, IntegrationStatus, TriggerType } from "@/types/enums";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -120,6 +120,62 @@ export async function setIntegrationInactiveAction(
   revalidatePath(`/tenants/${tenantId}/overview`);
 
   return { success: true, status: IntegrationStatus.INACTIVE };
+}
+
+const IN_PROGRESS_EXECUTION_STATUSES = new Set<ExecutionStatus>([
+  ExecutionStatus.CREATED,
+  ExecutionStatus.QUEUED,
+  ExecutionStatus.RUNNING,
+  ExecutionStatus.VALIDATING,
+  ExecutionStatus.MAPPING,
+  ExecutionStatus.TRANSFORMING,
+  ExecutionStatus.ROUTING,
+  ExecutionStatus.DELIVERING,
+]);
+
+const OPEN_DLQ_STATUSES = new Set<DlqStatus>([DlqStatus.OPEN, DlqStatus.IN_PROGRESS]);
+
+export async function deleteIntegrationAction(
+  tenantId: string,
+  integrationId: string
+): Promise<CreateIntegrationResult | void> {
+  const integration = await integrationService.getIntegration(integrationId);
+  if (!integration || integration.tenantId !== tenantId) {
+    return { success: false, error: "Integration not found." };
+  }
+
+  const executions = await executionService.getExecutionsByIntegration(integrationId);
+  const inProgressExecutions = executions.filter((execution) =>
+    IN_PROGRESS_EXECUTION_STATUSES.has(execution.status)
+  );
+  if (inProgressExecutions.length > 0) {
+    return {
+      success: false,
+      error: `This integration has ${inProgressExecutions.length} in-progress execution(s). Wait for them to finish or cancel them before deleting.`,
+    };
+  }
+
+  const dlqRecords = await dlqService.listRecords({ tenantId, integrationId, page: 1, pageSize: 500 });
+  const openDlqRecords = dlqRecords.data.filter((record) => OPEN_DLQ_STATUSES.has(record.status));
+  if (openDlqRecords.length > 0) {
+    return {
+      success: false,
+      error: `This integration has ${openDlqRecords.length} open DLQ record(s). Resolve or discard them before deleting.`,
+    };
+  }
+
+  const deleted = await integrationService.deleteIntegration(integrationId);
+  if (!deleted) {
+    return { success: false, error: "Integration not found." };
+  }
+
+  revalidatePath(`/tenants/${tenantId}/integrations`);
+  revalidatePath(`/tenants/${tenantId}/overview`);
+  revalidatePath(`/tenants/${tenantId}/connections`);
+  revalidatePath(`/tenants/${tenantId}/executions`);
+  revalidatePath(`/tenants/${tenantId}/dlq`);
+
+  redirect(`/tenants/${tenantId}/integrations`);
 }
 
 export async function saveIntegrationDraftAction(

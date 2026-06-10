@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { createIntegrationAction, setIntegrationInactiveAction } from "@/actions/integration.actions";
+import { createIntegrationAction, deleteIntegrationAction, setIntegrationInactiveAction } from "@/actions/integration.actions";
 import {
   IntegrationEditOverviewSection,
 } from "@/components/integrations/integration-config-sections";
@@ -12,8 +12,19 @@ import { MappingStep } from "@/components/integrations/mapping/mapping-step";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { useIntegrationForm } from "@/lib/integration-wizard/use-integration-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Connection, Integration, Provider } from "@/types/domain";
 import { IntegrationStatus } from "@/types/enums";
@@ -39,6 +50,8 @@ export function EditIntegrationForm({
   const [status, setStatus] = useState(integration.status);
   const [isPending, startTransition] = useTransition();
   const [isInactivePending, startInactiveTransition] = useTransition();
+  const [isDeletePending, startDeleteTransition] = useTransition();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const ctx = useIntegrationForm({ connections, providers, integration, mappingProfileCode });
   const { values, setValue, sourceConn, destConn, sourceProvider, destProvider, selectedDataFlow } = ctx;
@@ -66,6 +79,19 @@ export function EditIntegrationForm({
     });
   };
 
+  const handleDelete = () => {
+    setSubmitError(null);
+    startDeleteTransition(async () => {
+      const result = await deleteIntegrationAction(tenantId, integration.id);
+      if (result && !result.success) {
+        setSubmitError(result.error);
+        setDeleteDialogOpen(false);
+      }
+    });
+  };
+
+  const isBusy = isPending || isInactivePending || isDeletePending;
+
   return (
     <div className="space-y-6 pb-24">
       <div className="flex items-center gap-3">
@@ -87,7 +113,7 @@ export function EditIntegrationForm({
       {submitError && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Could not save integration</AlertTitle>
+          <AlertTitle>Action failed</AlertTitle>
           <AlertDescription>{submitError}</AlertDescription>
         </Alert>
       )}
@@ -140,10 +166,52 @@ export function EditIntegrationForm({
         </TabsContent>
       </Tabs>
 
+      <Card className="border-destructive/30">
+        <CardHeader>
+          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Deleting an integration permanently removes its configuration. Deactivate it first if
+            it is still active, and resolve any in-progress executions or open DLQ records.
+          </p>
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogTrigger
+              render={
+                <Button variant="destructive" className="min-h-11" disabled={isBusy}>
+                  Delete integration
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {integration.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes {integration.code} and its trigger, mapping, and policy
+                  settings. Completed execution history will remain, but this integration cannot be
+                  restored.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeletePending}>Keep integration</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={isDeletePending}
+                >
+                  {isDeletePending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Delete integration
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
+
       <div className="sticky bottom-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 border-t border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="flex justify-between gap-4 max-w-[1400px] mx-auto">
           <Link href={`/tenants/${tenantId}/integrations`}>
-            <Button type="button" variant="outline" className="min-h-11" disabled={isPending || isInactivePending}>
+            <Button type="button" variant="outline" className="min-h-11" disabled={isBusy}>
               Cancel
             </Button>
           </Link>
@@ -154,13 +222,13 @@ export function EditIntegrationForm({
                 variant="outline"
                 className="min-h-11"
                 onClick={handleSetInactive}
-                disabled={isPending || isInactivePending}
+                disabled={isBusy}
               >
                 {isInactivePending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                 Inactive
               </Button>
             )}
-            <Button type="button" className="min-h-11" onClick={handleSave} disabled={isPending || isInactivePending}>
+            <Button type="button" className="min-h-11" onClick={handleSave} disabled={isBusy}>
               {isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save integration
             </Button>

@@ -7,7 +7,7 @@ import {
   type UpdateConnectionInput,
 } from "@/lib/schemas/connection.schema";
 import { validateProviderAuth } from "@/lib/provider-connection/validate";
-import { connectionService, providerService } from "@/services";
+import { connectionService, integrationService, providerService } from "@/services";
 import { ConnectionActivationStatus, ConnectionStatus } from "@/types/enums";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -206,4 +206,40 @@ export async function toggleConnectionActiveStatusAction(
   revalidatePath(`/tenants/${tenantId}/overview`);
 
   return { success: true, activeStatus };
+}
+
+export async function deleteConnectionAction(
+  tenantId: string,
+  connectionId: string
+): Promise<ConnectionActionResult | void> {
+  const connection = await connectionService.getConnection(connectionId);
+  if (!connection || connection.tenantId !== tenantId) {
+    return { success: false, error: "Connection not found." };
+  }
+
+  const integrations = await integrationService.getIntegrationsByTenant(tenantId);
+  const inUse = integrations.filter(
+    (integration) =>
+      integration.sourceConnectionId === connectionId ||
+      integration.destinationConnectionId === connectionId
+  );
+
+  if (inUse.length > 0) {
+    const names = inUse.map((integration) => integration.name).join(", ");
+    return {
+      success: false,
+      error: `This connection is used by ${inUse.length} integration(s): ${names}. Remove or reassign them before deleting.`,
+    };
+  }
+
+  const deleted = await connectionService.deleteConnection(connectionId);
+  if (!deleted) {
+    return { success: false, error: "Connection not found." };
+  }
+
+  revalidatePath(`/tenants/${tenantId}/connections`);
+  revalidatePath(`/tenants/${tenantId}/overview`);
+  revalidatePath(`/tenants/${tenantId}/integrations`);
+
+  redirect(`/tenants/${tenantId}/connections`);
 }

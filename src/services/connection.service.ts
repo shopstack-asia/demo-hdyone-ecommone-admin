@@ -22,6 +22,10 @@ export class ConnectionService {
   async updateConnection(id: string, data: Partial<Connection>) {
     return repositories.connection.update(id, data);
   }
+
+  async deleteConnection(id: string) {
+    return repositories.connection.delete(id);
+  }
 }
 
 export const connectionService = new ConnectionService();

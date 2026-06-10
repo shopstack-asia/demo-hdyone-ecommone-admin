@@ -4,7 +4,7 @@ import { useCallback, useState, useTransition } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toggleConnectionActiveStatusAction, updateConnectionAction } from "@/actions/connection.actions";
+import { toggleConnectionActiveStatusAction, updateConnectionAction, deleteConnectionAction } from "@/actions/connection.actions";
 import { ConnectionStatusBadges } from "@/components/connections/connection-status-badges";
 import { ReviewStep } from "@/components/connections/provider-setup/steps/review-step";
 import { getProviderAuthSetup } from "@/components/connections/provider-setup/registry";
@@ -23,6 +23,17 @@ import {
 import type { ConnectionHealthMetrics, DiscoveredMetadata, ValidationResult } from "@/lib/provider-connection/types";
 import { updateConnectionSchema, type UpdateConnectionInput } from "@/lib/schemas/connection.schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -55,6 +66,8 @@ export function ConnectionDetailView({ tenantId, connection, provider }: Connect
   const [isTesting, setIsTesting] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isStatusPending, startStatusTransition] = useTransition();
+  const [isDeletePending, startDeleteTransition] = useTransition();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [marketplaceCredentialDraft, setMarketplaceCredentialDraft] = useState<Record<string, string>>({});
   const [marketplaceCredentialsDirty, setMarketplaceCredentialsDirty] = useState(false);
 
@@ -173,6 +186,19 @@ export function ConnectionDetailView({ tenantId, connection, provider }: Connect
     });
   };
 
+  const handleDelete = () => {
+    setSubmitError(null);
+    startDeleteTransition(async () => {
+      const result = await deleteConnectionAction(tenantId, connection.id);
+      if (result && !result.success) {
+        setSubmitError(result.error);
+        setDeleteDialogOpen(false);
+      }
+    });
+  };
+
+  const isBusy = isPending || isStatusPending || isDeletePending;
+
   return (
     <div className="space-y-6 pb-24">
       <div className="flex items-center gap-3">
@@ -196,7 +222,7 @@ export function ConnectionDetailView({ tenantId, connection, provider }: Connect
       {submitError && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Could not save connection</AlertTitle>
+          <AlertTitle>Action failed</AlertTitle>
           <AlertDescription>{submitError}</AlertDescription>
         </Alert>
       )}
@@ -252,10 +278,51 @@ export function ConnectionDetailView({ tenantId, connection, provider }: Connect
         </CardContent>
       </Card>
 
+      <Card className="border-destructive/30">
+        <CardHeader>
+          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Deleting a connection permanently removes its configuration. Integrations using this
+            connection must be updated first.
+          </p>
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogTrigger
+              render={
+                <Button variant="destructive" className="min-h-11" disabled={isBusy}>
+                  Delete connection
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {connection.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes the connection and its saved credentials. This action
+                  cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isDeletePending}>Keep connection</AlertDialogCancel>
+                <AlertDialogAction
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={isDeletePending}
+                >
+                  {isDeletePending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Delete connection
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </CardContent>
+      </Card>
+
       <div className="sticky bottom-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-4 border-t border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="flex justify-between gap-4 max-w-[1400px] mx-auto">
           <Link href={`/tenants/${tenantId}/connections`}>
-            <Button type="button" variant="outline" className="min-h-11" disabled={isPending || isStatusPending}>
+            <Button type="button" variant="outline" className="min-h-11" disabled={isBusy}>
               Cancel
             </Button>
           </Link>
@@ -268,12 +335,12 @@ export function ConnectionDetailView({ tenantId, connection, provider }: Connect
                 !isActive && "border-success-subtle-foreground/30 text-success-subtle-foreground hover:bg-success-subtle/30"
               )}
               onClick={handleToggleActiveStatus}
-              disabled={isPending || isStatusPending}
+              disabled={isBusy}
             >
               {isStatusPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {isActive ? "Disable" : "Enable"}
             </Button>
-            <Button type="button" className="min-h-11" onClick={handleSave} disabled={isPending || isStatusPending}>
+            <Button type="button" className="min-h-11" onClick={handleSave} disabled={isBusy}>
               {isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save connection
             </Button>

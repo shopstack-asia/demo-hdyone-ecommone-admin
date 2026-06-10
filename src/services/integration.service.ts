@@ -30,6 +30,10 @@ export class IntegrationService {
   async updateIntegration(id: string, data: Partial<Integration>) {
     return repositories.integration.update(id, data);
   }
+
+  async deleteIntegration(id: string) {
+    return repositories.integration.delete(id);
+  }
 }
 
 export const integrationService = new IntegrationService();

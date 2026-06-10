@@ -1,3 +1,4 @@
+import { TenantDangerZone } from "@/components/tenants/tenant-danger-zone";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,20 +46,7 @@ export default async function TenantSettingsPage({ params }: SettingsPageProps) 
         </CardContent>
       </Card>
 
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <CardTitle className="text-base text-destructive">Danger zone</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Suspending or archiving a tenant stops all integration executions.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" className="min-h-11">Suspend tenant</Button>
-            <Button variant="destructive" className="min-h-11">Archive tenant</Button>
-          </div>
-        </CardContent>
-      </Card>
+      <TenantDangerZone status={tenant.status} />
     </div>
   );
 }

@@ -17,6 +17,10 @@ export class ExecutionService {
   async getRecent(limit = 10) {
     return repositories.execution.findAll({ page: 1, pageSize: limit });
   }
+
+  async getExecutionsByIntegration(integrationId: string) {
+    return repositories.execution.findByIntegrationId(integrationId);
+  }
 }
 
 export const executionService = new ExecutionService();
